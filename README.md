@@ -58,6 +58,6 @@ And as always when trying new software with your 3D Printer, keep one hand on th
 ## Final notes
 I don't claim to be the worlds best programmer, nor am i a self professed 3D Printer expert but i have many years of experience with both and i'm pretty confident that this software works.
 
-I have included the C# 2015 project that you can compile yourself along with a binary build for MS Windows.
+I have included the C# 2015 project that you can compile yourself along with a binary build for MS Windows (see 3DWriter/bin/Release).
 
 I would love to hear your feedback :)
