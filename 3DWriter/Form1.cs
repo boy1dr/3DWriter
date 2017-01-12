@@ -99,8 +99,14 @@ namespace _3DWriter
                 counter++;
             }
             file.Close();
-            toolStripStatusLabel1.Text = "Font: " + fname;
-            toolStripStatusLabel2.Text = "Font Height: "+h_height+" Units";
+            update_font_size();
+        }
+
+        private void update_font_size()
+        {
+            toolStripStatusLabel1.Text = "Font: " + FontComboBox.Text;
+            toolStripStatusLabel2.Text = "Font Height: " + h_height + " Units";
+            toolStripStatusLabel5.Text = "Real line height: " + (h_height * double.Parse(fontscale_value.Text)).ToString() + "mm" ;
         }
 
         public Form1()
@@ -224,12 +230,14 @@ namespace _3DWriter
         private void trackBar1_Scroll(object sender, EventArgs e)
         {
             fontscale_value.Text = (trackBar1.Value/100.0).ToString();
+            update_font_size();
         }
 
         private void fontscale_value_DoubleClick(object sender, EventArgs e)
         {
             fontscale_value.Text = "0.2";
             trackBar1.Value = 20;
+            update_font_size();
         }
 
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
@@ -479,18 +487,21 @@ namespace _3DWriter
         {
             fontscale_value.Text = "0.2";
             trackBar1.Value = 20;
+            update_font_size();
         }
 
         private void label29_DoubleClick(object sender, EventArgs e)
         {
             fontscale_value.Text = "0.35";
             trackBar1.Value = 35;
+            update_font_size();
         }
 
         private void label30_DoubleClick(object sender, EventArgs e)
         {
             fontscale_value.Text = "0.5";
             trackBar1.Value = 50;
+            update_font_size();
         }
 
         private void resetDefaultsToolStripMenuItem_Click(object sender, EventArgs e)
