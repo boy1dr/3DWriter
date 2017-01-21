@@ -66,5 +66,5 @@ I would love to hear your feedback :)
 Added real line height to status bar.
 
 ### 21/01/2017 v1.2 released
-Updated path seperators with Path.DirectorySeparatorChar
+Updated path seperators with Path.DirectorySeparatorChar.  
 Work has begun on the font editor which is included in this version but disabled in the menu since it's no where near complete.
