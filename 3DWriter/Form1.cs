@@ -20,6 +20,8 @@ namespace _3DWriter
     {
         double h_height;                                        //font character height
         double h_char_count;                                    //font character count
+        string h_font_map;                                      //font map - Character index array
+
         double[][] font_chars = new double[250][];              //the main font array
         string last_filename = "";
         bool appfault = false;
@@ -27,79 +29,126 @@ namespace _3DWriter
 
         public void load_font(string fname)
         {
-            //reads the font file as text. these are written in c++, i'm just reading them in to an array to use in the render function.
-            //if you think this is ugly, wait till you see the render function :P
             int counter = 0;
             string line;
-            bool comment = false;
-            bool array_active = false;
-            string array_text = "";
-            bool commit = false;
-            bool stop_read = false;
-
-            double c_width = 0;                                 //temporary storage of character width. line array index #0             ///not used - i used realwidth instead
-            double c_realwidth = 0;                             //temporary storage of character real width. line array index #1
-            double c_size = 0;                                  //temporary storage of character size. line array index #2
 
             int charcount = 0;
-            toolStripStatusLabel1.Text = "Loading font - "+fname;
+            toolStripStatusLabel1.Text = "Loading font - " + fname;
             System.IO.StreamReader file =
-            new System.IO.StreamReader("fonts/"+fname+".h");
-            while ((line = file.ReadLine()) != null)            // iterate through the font file
+            new System.IO.StreamReader("fonts" + Path.DirectorySeparatorChar + fname + ".cmf");
+            while ((line = file.ReadLine()) != null)                                    // iterate through the font file
             {
-                if (!stop_read)
+                if (counter == 0) { Double.TryParse(line, out h_char_count); }          //first line: Character count
+                if (counter == 1) { Double.TryParse(line, out h_height); }              //second line: Character height
+                if (counter == 2) { h_font_map = line; }                                //third line: Character map
+                if (counter > 2)
                 {
-                    line = line.Trim();
-                    if (line != "" && line.Substring(0, 2) != "//" && (" " + line).IndexOf("/*") > 0) { comment = true; }
-                    if (line != "" && line.Substring(0, 2) != "//" && (" " + line).IndexOf("*/") > 0) { comment = false; }
-                    if (line != "" && line.Substring(0, 2) != "//" && !comment)
+                    //each line consists of width, realwidth, arraysize, [x/y pairs]    //arraysize is unused   //??
+                    string[] temparray = line.Split(',');
+                    font_chars[charcount] = new double[temparray.Length + 4];
+                    for(int idx=0; idx< temparray.Length; idx++)
                     {
-                        //This loop plucks out relevant chunks of data from each line
-                        if ((" " + line).IndexOf("{") > 0) { array_active = true; }                 //start curly brace - start of stroke x/y pair array
-                        if ((" " + line).IndexOf("}") > 0) { array_active = false; commit = true; } //end curly brace - end of stroke x/y pair array
-                        if (commit)
-                        {
-                            //we have all the data for 1 character, time to commit it to the main font character array 
-                            string[] temparray = array_text.Split(',');
-                            font_chars[charcount] = new double[Convert.ToInt32(c_size + 3)];
-                            font_chars[charcount][0] = c_width;
-                            font_chars[charcount][1] = c_realwidth;
-                            font_chars[charcount][2] = c_size;
-                            for (int aa = 0; aa < temparray.Length; aa++)
-                            {
-                                font_chars[charcount][aa + 3] = Convert.ToSingle(temparray[aa]);
-                            }
-                            commit = false;
-                            array_text = "";
-                            charcount++;
-                        }
-                        if (array_active)
-                        {
-                            if (array_text == "")
-                            {
-                                line = line.Substring(line.IndexOf("{") + 1);                       //start of array - start store the data
-                            }
-                            array_text += line.Replace(" ", "");                                    //clean it up
-                        }
-
-                        if (!commit && !array_active)
-                        {
-                            if ((" " + line).IndexOf("_width") > 0) { c_width = Convert.ToSingle((line.Substring(line.IndexOf("_width") + 8)).Replace(";", "")); }                      //nasty
-                            if ((" " + line).IndexOf("_realwidth") > 0) { c_realwidth = Convert.ToSingle((line.Substring(line.IndexOf("_realwidth") + 12)).Replace(";", "")); }         //nasty
-                            if ((" " + line).IndexOf("_size") > 0) { c_size = Convert.ToSingle((line.Substring(line.IndexOf("_size") + 7)).Replace(";", "")); }                         //nasty
-                            if ((" " + line).IndexOf("_count") > 0) { h_char_count = Convert.ToSingle((line.Substring(line.IndexOf("_count") + 8)).Replace(";", "")); }                 //nasty
-                            if ((" " + line).IndexOf("_height") > 0)
-                            {
-                                h_height = Convert.ToSingle((line.Substring(line.IndexOf("_height") + 9)).Replace(";", ""));                                                            //nasty
-                                stop_read = true;
-                            }
-                        }
+                        Double.TryParse(temparray[idx], out font_chars[charcount][idx]);
                     }
+                    charcount++;
                 }
                 counter++;
             }
             file.Close();
             update_font_size();
+        }
+
+        public void load_font_old(string fname)
+        {
+            using (System.IO.StreamWriter filewriter =
+               new System.IO.StreamWriter(@"fonts" + Path.DirectorySeparatorChar + fname + ".cmf"))
+            {
+                //reads the font file as text. these are written in c++, i'm just reading them in to an array to use in the render function.
+                //if you think this is ugly, wait till you see the render function :P
+                int counter = 0;
+                string line;
+                bool comment = false;
+                bool array_active = false;
+                string array_text = "";
+                bool commit = false;
+                bool stop_read = false;
+
+                double c_width = 0;                                 //temporary storage of character width. line array index #0             ///not used - i used realwidth instead
+                double c_realwidth = 0;                             //temporary storage of character real width. line array index #1
+                double c_size = 0;                                  //temporary storage of character size. line array index #2
+
+                int charcount = 0;
+                toolStripStatusLabel1.Text = "Loading font - " + fname;
+                System.IO.StreamReader file =
+                new System.IO.StreamReader("fonts" + Path.DirectorySeparatorChar + fname + ".h");
+                while ((line = file.ReadLine()) != null)            // iterate through the font file
+                {
+                    if (!stop_read)
+                    {
+                        line = line.Trim();
+                        if (line != "" && line.Substring(0, 2) != "//" && (" " + line).IndexOf("/*") > 0) { comment = true; }
+                        if (line != "" && line.Substring(0, 2) != "//" && (" " + line).IndexOf("*/") > 0) { comment = false; }
+                        if (line != "" && line.Substring(0, 2) != "//" && !comment)
+                        {
+                            //This loop plucks out relevant chunks of data from each line
+                            if ((" " + line).IndexOf("{") > 0) { array_active = true; }                 //start curly brace - start of stroke x/y pair array
+                            if ((" " + line).IndexOf("}") > 0) { array_active = false; commit = true; } //end curly brace - end of stroke x/y pair array
+                            if (commit)
+                            {
+                                //we have all the data for 1 character, time to commit it to the main font character array 
+                                string[] temparray = array_text.Split(',');
+                                font_chars[charcount] = new double[Convert.ToInt32(c_size + 3)];
+                                font_chars[charcount][0] = c_width;
+                                font_chars[charcount][1] = c_realwidth;
+                                font_chars[charcount][2] = c_size;
+                                for (int aa = 0; aa < temparray.Length; aa++)
+                                {
+                                    font_chars[charcount][aa + 3] = Convert.ToSingle(temparray[aa]);
+                                }
+                                commit = false;
+                                array_text = "";
+                                charcount++;
+                            }
+                            if (array_active)
+                            {
+                                if (array_text == "")
+                                {
+                                    line = line.Substring(line.IndexOf("{") + 1);                       //start of array - start store the data
+                                }
+                                array_text += line.Replace(" ", "");                                    //clean it up
+                            }
+
+                            if (!commit && !array_active)
+                            {
+                                if ((" " + line).IndexOf("_width") > 0) { c_width = Convert.ToSingle((line.Substring(line.IndexOf("_width") + 8)).Replace(";", "")); }                      //nasty
+                                if ((" " + line).IndexOf("_realwidth") > 0) { c_realwidth = Convert.ToSingle((line.Substring(line.IndexOf("_realwidth") + 12)).Replace(";", "")); }         //nasty
+                                if ((" " + line).IndexOf("_size") > 0) { c_size = Convert.ToSingle((line.Substring(line.IndexOf("_size") + 7)).Replace(";", "")); }                         //nasty
+                                if ((" " + line).IndexOf("_count") > 0) { h_char_count = Convert.ToSingle((line.Substring(line.IndexOf("_count") + 8)).Replace(";", "")); }                 //nasty
+                                if ((" " + line).IndexOf("_height") > 0)
+                                {
+                                    h_height = Convert.ToSingle((line.Substring(line.IndexOf("_height") + 9)).Replace(";", ""));                                                            //nasty
+                                    stop_read = true;
+                                }
+                            }
+                        }
+                    }
+                    counter++;
+                }
+                file.Close();
+                update_font_size();
+
+                //TMP font write cmf file
+                //filewriter.WriteLine(line);
+                filewriter.WriteLine(h_char_count);
+                filewriter.WriteLine(h_height);
+                filewriter.WriteLine(" !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~");
+                for (int tmpa = 0; tmpa < charcount; tmpa++)
+                {
+                       
+                    filewriter.WriteLine(string.Join(",", font_chars[tmpa]));
+                }
+                
+            }
         }
 
         private void update_font_size()
@@ -121,7 +170,7 @@ namespace _3DWriter
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            if (!File.Exists("fonts/scriptc.h"))        //check for fonts folder
+            if (!File.Exists("fonts" + Path.DirectorySeparatorChar + "scriptc.h"))        //check for fonts folder
             {
                 MessageBox.Show("Unable to find the fonts folder in the application folder.");
                 appfault = true;
@@ -148,10 +197,10 @@ namespace _3DWriter
             }
             else
             {
-                string[] fileEntries = Directory.GetFiles("fonts/");
+                string[] fileEntries = Directory.GetFiles("fonts" + Path.DirectorySeparatorChar);
                 foreach (string fileName in fileEntries)
                 {
-                    String font_name = fileName.Replace("fonts/", "");
+                    String font_name = fileName.Replace("fonts" + Path.DirectorySeparatorChar, "");
                     if (font_name.IndexOf(".h") > 0)
                     {
                         FontComboBox.Items.Add(font_name.Replace(".h", ""));
@@ -170,6 +219,8 @@ namespace _3DWriter
             pendown.Text = Properties.Settings.Default.pendown;
             tspeed.Text = Properties.Settings.Default.tspeed;
             dspeed.Text = Properties.Settings.Default.dspeed;
+            zspeed.Text = Properties.Settings.Default.zspeed;
+
             homex.Checked = Properties.Settings.Default.homex;
             homey.Checked = Properties.Settings.Default.homey;
             homez.Checked = Properties.Settings.Default.homez;
@@ -192,7 +243,7 @@ namespace _3DWriter
         private void SaveSettings()
         {
             //saves the application settings from the data in the UI components
-            if (!appfault)  //if the app fails to load, wer don't want a save to occur on unload. i.e. if fonts folder is missing
+            if (!appfault)  //if the app fails to load, we don't want a save to occur on unload. i.e. if fonts folder is missing
             {
                 Properties.Settings.Default.bedwidth = bedwidth.Text;
                 Properties.Settings.Default.beddepth = beddepth.Text;
@@ -200,6 +251,7 @@ namespace _3DWriter
                 Properties.Settings.Default.pendown = pendown.Text;
                 Properties.Settings.Default.tspeed = tspeed.Text;
                 Properties.Settings.Default.dspeed = dspeed.Text;
+                Properties.Settings.Default.zspeed = zspeed.Text;
                 Properties.Settings.Default.homex = homex.Checked;
                 Properties.Settings.Default.homey = homey.Checked;
                 Properties.Settings.Default.homez = homez.Checked;
@@ -223,7 +275,7 @@ namespace _3DWriter
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             //font preview
-            String pic_file = (Application.StartupPath) + "\\fonts\\" + FontComboBox.Text + ".png";
+            String pic_file = (Application.StartupPath) + Path.DirectorySeparatorChar + "fonts" + Path.DirectorySeparatorChar + FontComboBox.Text + ".png";
             Process.Start(@pic_file);
         }
 
@@ -285,6 +337,7 @@ namespace _3DWriter
 
             int F_draw = Convert.ToInt32(dspeed.Text) * 60;                         //get the Draw speed setting from the UI
             int F_travel = Convert.ToInt32(tspeed.Text) * 60;                       //get the Travel speed setting from the UI
+            int F_zspeed = Convert.ToInt32(zspeed.Text) * 60;                       //get the Z-Axis speed setting from the UI
 
             double lastx = 0;                                                       //keep track of where we were for pen up/pen down test
             double lasty = 0;
@@ -299,8 +352,9 @@ namespace _3DWriter
             
             string output = "";                                                     //init the GCode output string
 
-            if ( !(!homex.Checked && !homey.Checked && !homez.Checked) ) {          //Do we need to home the printer?
-                output+= "G28 " + (homex.Checked?"X":"") + " " + (homey.Checked ? "Y" : "") + " " + (homez.Checked ? "Z" : "") + " F" + F_travel + "\r\n";
+            //if ( !(!homex.Checked && !homey.Checked && !homez.Checked) ) {          //Do we need to home the printer?
+            if ( homex.Checked || homey.Checked || homez.Checked) { 
+                    output += "G28 " + (homex.Checked?"X":"") + " " + (homey.Checked ? "Y" : "") + " " + (homez.Checked ? "Z" : "") + " F" + F_travel + "\r\n";
             }
             output+= "G0 Z" + penup.Text + " F" + F_travel + "\r\n";                //Pen up before any moves
             
@@ -341,9 +395,9 @@ namespace _3DWriter
                             }
                             else
                             {
-                                output += "G0 Z" + penup.Text + " F" + F_travel + "\r\n";                               //raise the pen - Pen up
+                                output += "G0 Z" + penup.Text + " F" + F_zspeed + "\r\n";                               //raise the pen - Pen up
                                 output += "G0 X" + GX.ToString() + " Y" + GY.ToString() + " F" + F_draw + "\r\n";       //move the pen      
-                                output += "G0 Z" + (dryrun.Checked ? penup.Text : pendown.Text) + " F" + F_travel + "\r\n";     //put the pen down (unless dry run is on)
+                                output += "G0 Z" + (dryrun.Checked ? penup.Text : pendown.Text) + " F" + F_zspeed + "\r\n";     //put the pen down (unless dry run is on)
                                
                             }
                             if (Convert.ToInt32(GX) > max_x || Convert.ToInt32(GX) < 0) out_of_bounds = true;       //check if we went out of bounds
@@ -369,9 +423,10 @@ namespace _3DWriter
                 //end lines loop
             }
             //end of ploting moves
-            output += "G0 Z" + penup.Text + " F" + F_travel + "\r\n";                   //Raise the pen
+            output += "G0 Z" + penup.Text + " F" + F_zspeed + "\r\n";                   //Raise the pen
 
-            if (!(!homex.Checked && !homey.Checked))                                    //Home the pen (if enabled in UI)
+            //if (!(!homex.Checked && !homey.Checked))                                    //Home the pen (if enabled in UI)
+            if ( homex.Checked || homey.Checked )
             {
                 output += "G0 " + (homex.Checked ? "X0" : "") + " " + (homey.Checked ? "Y0" : "") + " F" + F_travel + "\r\n";
             }
@@ -544,6 +599,14 @@ namespace _3DWriter
         {
             update_bed_size();
         }
+
+        private void editorToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            FontEditor editorbox = new FontEditor();
+            editorbox.Show();
+        }
+
+
 
         //Wow you made it, take a break :P
     }

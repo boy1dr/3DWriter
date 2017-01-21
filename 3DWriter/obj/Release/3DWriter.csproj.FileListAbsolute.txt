@@ -73,3 +73,4 @@ C:\Users\chris\documents\visual studio 2015\Projects\3DWriter\3DWriter\bin\Relea
 C:\Users\chris\documents\visual studio 2015\Projects\3DWriter\3DWriter\bin\Release\fonts\timesib.h
 C:\Users\chris\documents\visual studio 2015\Projects\3DWriter\3DWriter\bin\Release\fonts\timesr.h
 C:\Users\chris\documents\visual studio 2015\Projects\3DWriter\3DWriter\bin\Release\fonts\timesrb.h
+C:\Users\chris\documents\visual studio 2015\Projects\3DWriter\3DWriter\obj\Release\_3DWriter.FontEditor.resources

@@ -238,5 +238,17 @@ namespace _3DWriter.Properties {
                 this["preview_multiplier"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("120")]
+        public string zspeed {
+            get {
+                return ((string)(this["zspeed"]));
+            }
+            set {
+                this["zspeed"] = value;
+            }
+        }
     }
 }
