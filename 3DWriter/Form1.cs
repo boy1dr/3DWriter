@@ -13,6 +13,9 @@ using System.Windows.Forms;
 using System.IO;
 using System.Collections;
 using System.Diagnostics;
+using System.Net;
+using System.Xml.Linq;
+using System.Xml;
 
 namespace _3DWriter
 {
@@ -45,7 +48,7 @@ namespace _3DWriter
                 {
                     //each line consists of width, realwidth, arraysize, [x/y pairs]    //arraysize is unused   //??
                     string[] temparray = line.Split(',');
-                    font_chars[charcount] = new double[temparray.Length + 4];
+                    font_chars[charcount] = new double[temparray.Length ];
                     for(int idx=0; idx< temparray.Length; idx++)
                     {
                         Double.TryParse(temparray[idx], out font_chars[charcount][idx]);
@@ -155,7 +158,7 @@ namespace _3DWriter
         {
             toolStripStatusLabel1.Text = "Font: " + FontComboBox.Text;
             toolStripStatusLabel2.Text = "Font Height: " + h_height + " Units";
-            toolStripStatusLabel5.Text = "Real line height: " + (h_height * double.Parse(fontscale_value.Text)).ToString() + "mm" ;
+            lbl_font_height.Text = (h_height * double.Parse(fontscale_value.Text)).ToString();
         }
 
         public Form1()
@@ -181,6 +184,32 @@ namespace _3DWriter
                 LoadSettings(); //reads the application settings and fills in all the UI components
                 LoadFonts(toolStripButton2.Checked);    //fills in the font selection combobox
                 load_font(Properties.Settings.Default.default_font);    //reads the selected font file in to memory
+            }
+            CheckVersion();
+        }
+
+        void CheckVersion()
+        {
+            //read the csproj file from github
+            WebClient client = new WebClient();
+            Stream stream = client.OpenRead("https://raw.githubusercontent.com/boy1dr/3DWriter/master/3DWriter/3DWriter.csproj");
+            StreamReader reader = new StreamReader(stream);
+            String content = reader.ReadToEnd();
+
+            if (content != "") {
+                //check version
+                int start = content.IndexOf("<ApplicationVersion>");
+                int end = content.IndexOf("</ApplicationVersion>");
+                if (end - start > 0)
+                {
+                    String apver = content.Substring(start + 20, (end - start) - 20);
+                    string[] appfile = apver.Split('.');
+                    string[] appver = Application.ProductVersion.ToString().Split('.');
+                    if (appfile[0] == appver[0] && appfile[1] == appver[1]) { 
+                    }else {
+                        MessageBox.Show("There is a newer version available");
+                    }
+                }
             }
         }
 
@@ -327,13 +356,15 @@ namespace _3DWriter
             double char_height = h_height * scale;                                  //scale up the character height
             double line_spacing = Convert.ToSingle(lspacing.Text) * scale;          //scale up the line spacing  
             double letter_spacing = Convert.ToSingle(letspacing.Text) * scale;      //scale up the letter spacing
+            double font_offset_y = double.Parse(lbl_font_height.Text);              //align text with edge of bed
 
-            double offx = Convert.ToInt32(offsetx.Text);                            //get the X Offset from the UI
-            double offy = Convert.ToInt32(offsety.Text);                            //get the Y Offset from the UI
+            double offx = Convert.ToSingle(offsetx.Text);                            //get the X Offset from the UI
+            double offy = Convert.ToSingle(offsety.Text);                            //get the Y Offset from the UI
 
             bool out_of_bounds = false;                                             //init a boolean for general plotting fault
-            double max_x = Convert.ToInt32(bedwidth.Text);                          //get the Bed X setting from the UI
-            double max_y = Convert.ToInt32(beddepth.Text);                          //get the Bed Y setting from the UI
+
+            double max_x = Convert.ToSingle(bedwidth.Text);                          //get the Bed X setting from the UI
+            double max_y = Convert.ToSingle(beddepth.Text);                          //get the Bed Y setting from the UI
 
             int F_draw = Convert.ToInt32(dspeed.Text) * 60;                         //get the Draw speed setting from the UI
             int F_travel = Convert.ToInt32(tspeed.Text) * 60;                       //get the Travel speed setting from the UI
@@ -379,15 +410,15 @@ namespace _3DWriter
                             double y2 = Convert.ToDouble(font_chars[cnum][(b * 4) + 3 + 3] * scale);
 
                             double draw_x1 = accum_x + x1 + offx;                   //calculate the scaled points for the picutrebox
-                            double draw_y1 = ( offy + accum_y) + y1;
+                            double draw_y1 = (offy + accum_y) + y1;
                             double draw_x2 = accum_x + x2 + offx;
-                            double draw_y2 = ( offy + accum_y) + y2;
+                            double draw_y2 = (offy + accum_y) + y2;
 
                             previewGraphics.DrawLine(Pens.Blue, Convert.ToInt32(draw_x1 * preview_mag), Convert.ToInt32(draw_y1 * preview_mag), Convert.ToInt32(draw_x2 * preview_mag), Convert.ToInt32(draw_y2 * preview_mag));    //draw a stroke to the picturebox
 
                             //start a pen stroke
-                            GX = accum_x + x1 + offx;                               //calculate the GCode X value
-                            GY = (char_height - y1) + (max_y - offy) - accum_y;     //calculate the GCode Y value
+                            GX = accum_x + x1 + offx;                                               //calculate the GCode X value
+                            GY = ((char_height - y1) + (max_y - offy) - accum_y) - font_offset_y;     //calculate the GCode Y value
 
                             if (lastx == accum_x + x1 + offx && lasty == (char_height - y1) + (max_y - offy))           //test if the pen needs to raise for a travel
                             {
@@ -398,14 +429,14 @@ namespace _3DWriter
                                 output += "G0 Z" + penup.Text + " F" + F_zspeed + "\r\n";                               //raise the pen - Pen up
                                 output += "G0 X" + GX.ToString() + " Y" + GY.ToString() + " F" + F_draw + "\r\n";       //move the pen      
                                 output += "G0 Z" + (dryrun.Checked ? penup.Text : pendown.Text) + " F" + F_zspeed + "\r\n";     //put the pen down (unless dry run is on)
-                               
+
                             }
-                            if (Convert.ToInt32(GX) > max_x || Convert.ToInt32(GX) < 0) out_of_bounds = true;       //check if we went out of bounds
-                            if (Convert.ToInt32(GY) > max_y || Convert.ToInt32(GY) < 0) out_of_bounds = true;
+                            if (Convert.ToInt32(GX) > max_x || Convert.ToInt32(GX) < 0) { out_of_bounds = true; }       //check if we went out of bounds
+                            if (Convert.ToInt32(GY) > max_y || Convert.ToInt32(GY) < 0) { out_of_bounds = true; }
 
                             //end the pen stroke
-                            GX = (accum_x + x2 + offx);                             //calculate the GCode X value
-                            GY = ((char_height - y2) + (max_y - offy)) - accum_y;   //calculate the GCode Y value
+                            GX = (accum_x + x2 + offx);                                                 //calculate the GCode X value
+                            GY = (((char_height - y2) + (max_y - offy)) - accum_y) - font_offset_y;     //calculate the GCode Y value
                             output += "G0 X" + GX.ToString() + " Y" + GY.ToString() + " F" + F_draw + "\r\n";       //write the move to the output string
 
                             lastx = accum_x + x2 + offx;                            //keep the last x/y so we can test it for pen up on next loop
@@ -568,6 +599,7 @@ namespace _3DWriter
             pendown.Text = "45";
             tspeed.Text = "100";
             dspeed.Text = "40";
+            zspeed.Text = "40";
             homex.Checked = true;
             homey.Checked = true;
             homez.Checked = true;
@@ -582,7 +614,8 @@ namespace _3DWriter
             FontComboBox.Text = "cursive";
             preview_mag2.Checked = true;
             update_bed_size();
-       
+            update_font_size();
+
         }
 
         private void preview_mag1_Click(object sender, EventArgs e)

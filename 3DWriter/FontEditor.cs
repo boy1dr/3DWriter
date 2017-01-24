@@ -65,7 +65,7 @@ namespace _3DWriter
                 {
                     //each line consists of width, realwidth, arraysize, [x/y pairs]    //arraysize is unused   //??
                     string[] temparray = line.Split(',');
-                    font_chars[charcount] = new double[temparray.Length + 4];
+                    font_chars[charcount] = new double[temparray.Length];
                     for (int idx = 0; idx < temparray.Length; idx++)
                     {
                         Double.TryParse(temparray[idx], out font_chars[charcount][idx]);
@@ -85,15 +85,18 @@ namespace _3DWriter
         private void lv_charmap_SelectedIndexChanged(object sender, EventArgs e)
         {
             //attempt to generate UI objects that represent the character
-            double startx = 102;
-            double starty = 69;
-            
             int scale = 10;
+            Pen semiTransPen = new Pen(Color.FromArgb(25, 255, 0, 0), 2);           //create a transparent red pen for the margins (offset)
 
             Bitmap preview;
 
             lv_points.Items.Clear();
             segments_clear();
+
+            /*for(int xx = 0; xx< panel1.Height; xx=xx+10)
+            {
+                panel1.DrawLine(semiTransPen, 0, Convert.ToSingle(xx), pb_preview.Width, Convert.ToSingle((offy * preview_mag)));  //horizontal line X
+            }*/
 
             int idx = 0;
             if (lv_charmap.SelectedItems.Count > 0)
@@ -111,12 +114,98 @@ namespace _3DWriter
 
                     segments[segs] = new PictureBox();
                     segments[segs].Name = "seg" + segs;
+                    
+                    double pen_x1;
+                    double pen_x2;
+                    double pen_y1;
+                    double pen_y2;
 
+                    double pb_loc_x = 0;
+                    double pb_loc_y = 0;
+                    double pb_size_x = 0;
+                    double pb_size_y = 0;
+                    /*
+                    if (x2 > x1 && y2 > y1)
+                    {   //this probably wont work out.
+                        segments[segs].Location = new Point(Convert.ToInt32(x1 * scale), Convert.ToInt32(y1 * scale));
+                        segments[segs].Size = new Size(Convert.ToInt32((x2 - x1) * scale)+1, Convert.ToInt32((y2 - y1) * scale)+1);
+                    }
+                    else
+                    {
+                        segments[segs].Location = new Point(Convert.ToInt32(x2 * scale), Convert.ToInt32(y2 * scale));
+                        //segments[segs].Size = new Size(Math.Abs(Convert.ToInt32((x1 - x2) * scale))+1, Math.Abs(Convert.ToInt32((y1 - y2) * scale))+1);
+                        segments[segs].Size = new Size(Convert.ToInt32((x1 - x2) * scale) + 1, Convert.ToInt32((y1 - y2) * scale) + 1);
+                    }*/
+
+                    if (x1 > x2)
+                    {
+                        pen_x1 = 0;
+                        pen_x2 = segments[segs].Width;
+
+                        pb_loc_x = x2;
+                        pb_size_x = x1 - x2;
+                    }
+                    else
+                    {
+                        if (x1 != x2)
+                        {
+                            pen_x1 = segments[segs].Width;
+                            pen_x2 = 0;
+
+                            pb_loc_x = x1;
+                            pb_size_x = x2 - x1;
+                        }
+                        else
+                        {
+                            pen_x1 = 0;
+                            pen_x2 = 0;
+
+                            pb_loc_x = x1;
+                            pb_size_x = 1;
+                        }
+                    }
+                    if (y1 > y2)
+                    {
+                        pen_y1 = 0;
+                        pen_y2 = segments[segs].Height;
+
+                        pb_loc_y = y2;
+                        pb_size_y = y1 - y2;
+                    }
+                    else
+                    {
+                        if (y1 != y2)
+                        {
+                            pen_y1 = segments[segs].Height;
+                            pen_y2 = 0;
+
+                            pb_loc_y = y1;
+                            pb_size_y = y2 - y1;
+                        }
+                        else
+                        {
+                            pen_y1 = 0;
+                            pen_y2 = 0;
+
+                            pb_loc_y = y1;
+                            pb_size_y = 1;
+                        }
+                    }
+
+                    segments[segs].Location = new Point(Convert.ToInt32(pb_loc_x * scale), Convert.ToInt32(pb_loc_y * scale));
+                    segments[segs].Size = new Size(Convert.ToInt32(pb_size_x * scale) + 1, Convert.ToInt32(pb_size_y * scale) + 1);
+                    preview = new Bitmap(segments[segs].Width + 1, segments[segs].Height + 1);       //init the picturebox
+                    Graphics previewGraphics = Graphics.FromImage(preview);
+                    previewGraphics.DrawLine(Pens.Blue, Convert.ToInt32(pen_x1*scale), Convert.ToInt32(pen_y1 * scale), Convert.ToInt32(pen_x2 * scale), Convert.ToInt32(pen_y2 * scale));    //draw a stroke to the picturebox
+
+
+
+                    /*
                     if (x2 > x1 && y2 > y1) {   //this probably wont work out.
                         segments[segs].Location = new Point(Convert.ToInt32(x1 * scale), Convert.ToInt32(y1 * scale));
-                        segments[segs].Size = new Size(Convert.ToInt32((x2 - x1) * scale)+2, Convert.ToInt32((y2 - y1) * scale)+2);
+                        segments[segs].Size = new Size(Convert.ToInt32((x2 - x1) * scale), Convert.ToInt32((y2 - y1) * scale));
 
-                        preview = new Bitmap(segments[segs].Width, segments[segs].Height);       //init the picturebox
+                        preview = new Bitmap(segments[segs].Width+1, segments[segs].Height+1);       //init the picturebox
                         Graphics previewGraphics = Graphics.FromImage(preview);
                         previewGraphics.DrawLine(Pens.Blue, 0, 0, segments[segs].Width, segments[segs].Height);    //draw a stroke to the picturebox
 
@@ -124,13 +213,15 @@ namespace _3DWriter
                     else
                     {
                         segments[segs].Location = new Point(Convert.ToInt32(x2 * scale), Convert.ToInt32(y2 * scale));
-                        segments[segs].Size = new Size(Math.Abs(Convert.ToInt32((x1 - x2) * scale)+2), Math.Abs(Convert.ToInt32((y1 - y2) * scale)+2));
+                        segments[segs].Size = new Size(Math.Abs(Convert.ToInt32((x1 - x2) * scale)), Math.Abs(Convert.ToInt32((y1 - y2) * scale)));
 
-                        preview = new Bitmap(Math.Abs(segments[segs].Width)+1, Math.Abs( segments[segs].Height)+1);       //init the picturebox
+                        preview = new Bitmap(Math.Abs(segments[segs].Width)+5, Math.Abs( segments[segs].Height)+5);       //init the picturebox
                         Graphics previewGraphics = Graphics.FromImage(preview);
-                        previewGraphics.DrawLine(Pens.Blue,  segments[segs].Width+1, 0, 0, segments[segs].Height+1);    //draw a stroke to the picturebox
+                        previewGraphics.DrawLine(Pens.Blue,  segments[segs].Width, segments[segs].Height, 0, 0);    //draw a stroke to the picturebox
                     }
-                    segments[segs].BackColor = System.Drawing.Color.White;
+                    */
+
+                    segments[segs].BackColor = System.Drawing.Color.Transparent;    // .White;
                     segments[segs].MouseClick += new MouseEventHandler(segment_Click);
                     segments[segs].Image = preview;
 
@@ -143,7 +234,8 @@ namespace _3DWriter
         {
             PictureBox pb = (PictureBox)sender;
             segment_highlight(pb);
-            lv_points.Items[5].Selected = true;
+            int idx = Convert.ToInt32((pb.Name).Replace("seg", ""));
+            lv_points.Items[idx].Selected = true;
 
         }
 
@@ -160,10 +252,23 @@ namespace _3DWriter
         {
             for(int aa=0; aa< segs; aa++)
             {
-                segments[aa].BackColor = System.Drawing.Color.Red;
+                segments[aa].BackColor = System.Drawing.Color.Transparent;
             }
-            this_pb.BackColor = System.Drawing.Color.Green;
+            this_pb.BackColor = System.Drawing.Color.Yellow;
         }
 
+        private void lv_points_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            int idx;
+            if (lv_points.SelectedItems.Count > 0)
+            {
+                idx = lv_points.Items.IndexOf(lv_points.SelectedItems[0]);
+                for (int aa = 0; aa < segs; aa++)
+                {
+                    segments[aa].BackColor = System.Drawing.Color.Transparent;
+                }
+                segments[idx].BackColor = System.Drawing.Color.Yellow;
+            }
+        }
     }
 }

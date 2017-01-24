@@ -106,8 +106,9 @@
             this.toolStripStatusLabel1 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel3 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
-            this.toolStripStatusLabel5 = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel4 = new System.Windows.Forms.ToolStripStatusLabel();
+            this.lbl_font_height = new System.Windows.Forms.Label();
+            this.label34 = new System.Windows.Forms.Label();
             this.menuStrip1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -274,6 +275,8 @@
             // 
             // panel2
             // 
+            this.panel2.Controls.Add(this.label34);
+            this.panel2.Controls.Add(this.lbl_font_height);
             this.panel2.Controls.Add(this.preview_mag4);
             this.panel2.Controls.Add(this.preview_mag2);
             this.panel2.Controls.Add(this.preview_mag1);
@@ -335,31 +338,31 @@
             // label30
             // 
             this.label30.AutoSize = true;
-            this.label30.Location = new System.Drawing.Point(15, 414);
+            this.label30.Location = new System.Drawing.Point(15, 420);
             this.label30.Name = "label30";
-            this.label30.Size = new System.Drawing.Size(48, 13);
+            this.label30.Size = new System.Drawing.Size(70, 13);
             this.label30.TabIndex = 52;
-            this.label30.Text = "Title: 0.5";
+            this.label30.Text = "Title: 18.5mm";
             this.label30.DoubleClick += new System.EventHandler(this.label30_DoubleClick);
             // 
             // label29
             // 
             this.label29.AutoSize = true;
-            this.label29.Location = new System.Drawing.Point(15, 394);
+            this.label29.Location = new System.Drawing.Point(15, 401);
             this.label29.Name = "label29";
-            this.label29.Size = new System.Drawing.Size(104, 13);
+            this.label29.Size = new System.Drawing.Size(111, 13);
             this.label29.TabIndex = 51;
-            this.label29.Text = "Letter Heading: 0.35";
+            this.label29.Text = "Letter Heading: 13mm";
             this.label29.DoubleClick += new System.EventHandler(this.label29_DoubleClick);
             // 
             // label28
             // 
             this.label28.AutoSize = true;
-            this.label28.Location = new System.Drawing.Point(15, 379);
+            this.label28.Location = new System.Drawing.Point(15, 382);
             this.label28.Name = "label28";
-            this.label28.Size = new System.Drawing.Size(91, 13);
+            this.label28.Size = new System.Drawing.Size(107, 13);
             this.label28.TabIndex = 50;
-            this.label28.Text = "Letter Writing: 0.2";
+            this.label28.Text = "Letter Writing: 7.5mm";
             this.label28.DoubleClick += new System.EventHandler(this.label28_DoubleClick);
             // 
             // panel1
@@ -778,23 +781,24 @@
             // 
             // fontscale_value
             // 
-            this.fontscale_value.Location = new System.Drawing.Point(349, 322);
+            this.fontscale_value.Location = new System.Drawing.Point(315, 348);
             this.fontscale_value.Name = "fontscale_value";
             this.fontscale_value.Size = new System.Drawing.Size(37, 13);
             this.fontscale_value.TabIndex = 32;
             this.fontscale_value.Text = "0";
             this.fontscale_value.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            this.fontscale_value.Visible = false;
             this.fontscale_value.DoubleClick += new System.EventHandler(this.fontscale_value_DoubleClick);
             // 
             // trackBar1
             // 
             this.trackBar1.LargeChange = 50;
-            this.trackBar1.Location = new System.Drawing.Point(76, 318);
+            this.trackBar1.Location = new System.Drawing.Point(69, 316);
             this.trackBar1.Maximum = 200;
             this.trackBar1.Minimum = 2;
             this.trackBar1.Name = "trackBar1";
             this.trackBar1.RightToLeftLayout = true;
-            this.trackBar1.Size = new System.Drawing.Size(287, 45);
+            this.trackBar1.Size = new System.Drawing.Size(253, 45);
             this.trackBar1.SmallChange = 20;
             this.trackBar1.TabIndex = 31;
             this.trackBar1.TickFrequency = 50;
@@ -806,9 +810,9 @@
             this.label17.AutoSize = true;
             this.label17.Location = new System.Drawing.Point(12, 322);
             this.label17.Name = "label17";
-            this.label17.Size = new System.Drawing.Size(58, 13);
+            this.label17.Size = new System.Drawing.Size(51, 13);
             this.label17.TabIndex = 30;
-            this.label17.Text = "Font Scale";
+            this.label17.Text = "Font Size";
             // 
             // pb_preview
             // 
@@ -836,7 +840,6 @@
             this.toolStripStatusLabel1,
             this.toolStripStatusLabel3,
             this.toolStripStatusLabel2,
-            this.toolStripStatusLabel5,
             this.toolStripStatusLabel4});
             this.statusStrip1.Location = new System.Drawing.Point(0, 504);
             this.statusStrip1.Name = "statusStrip1";
@@ -866,19 +869,31 @@
             this.toolStripStatusLabel2.Text = "No fonts loaded";
             this.toolStripStatusLabel2.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // toolStripStatusLabel5
-            // 
-            this.toolStripStatusLabel5.Name = "toolStripStatusLabel5";
-            this.toolStripStatusLabel5.Size = new System.Drawing.Size(312, 17);
-            this.toolStripStatusLabel5.Spring = true;
-            this.toolStripStatusLabel5.Text = "No fonts loaded";
-            this.toolStripStatusLabel5.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            // 
             // toolStripStatusLabel4
             // 
             this.toolStripStatusLabel4.Name = "toolStripStatusLabel4";
-            this.toolStripStatusLabel4.Size = new System.Drawing.Size(327, 17);
+            this.toolStripStatusLabel4.Size = new System.Drawing.Size(639, 17);
+            this.toolStripStatusLabel4.Spring = true;
             this.toolStripStatusLabel4.Text = "Tested only on a RepRap Prusa i3 Clone with Marlin firmware";
+            this.toolStripStatusLabel4.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            // 
+            // lbl_font_height
+            // 
+            this.lbl_font_height.Location = new System.Drawing.Point(315, 322);
+            this.lbl_font_height.Name = "lbl_font_height";
+            this.lbl_font_height.Size = new System.Drawing.Size(37, 13);
+            this.lbl_font_height.TabIndex = 56;
+            this.lbl_font_height.Text = "0";
+            this.lbl_font_height.TextAlign = System.Drawing.ContentAlignment.TopRight;
+            // 
+            // label34
+            // 
+            this.label34.Location = new System.Drawing.Point(358, 322);
+            this.label34.Name = "label34";
+            this.label34.Size = new System.Drawing.Size(24, 13);
+            this.label34.TabIndex = 57;
+            this.label34.Text = "mm";
+            this.label34.TextAlign = System.Drawing.ContentAlignment.TopRight;
             // 
             // Form1
             // 
@@ -990,11 +1005,12 @@
         private System.Windows.Forms.RadioButton preview_mag2;
         private System.Windows.Forms.RadioButton preview_mag1;
         private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel4;
-        private System.Windows.Forms.ToolStripStatusLabel toolStripStatusLabel5;
         private System.Windows.Forms.Label label32;
         private System.Windows.Forms.TextBox zspeed;
         private System.Windows.Forms.Label label31;
         private System.Windows.Forms.ToolStripMenuItem editorToolStripMenuItem;
+        private System.Windows.Forms.Label label34;
+        private System.Windows.Forms.Label lbl_font_height;
     }
 }
 
