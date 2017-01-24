@@ -70,8 +70,8 @@ Updated path seperators with Path.DirectorySeparatorChar.
 Work has begun on the font editor which is included in this version but disabled in the menu since it's no where near complete.
 
 ### 24/01/2017 V1.3 released
-Fixed GCode offset issue with Y axis.
-Fixed incorrect index of character array causing erroneous moves.
-Added version checking.
-Changed ui font scale to font size in mm.
-(sorry for the multiple commits, has been a long day)
+Fixed GCode offset issue with Y axis.  
+Fixed incorrect index of character array causing erroneous moves.  
+Added version checking.  
+Changed ui font scale to font size in mm.  
+(sorry for the multiple commits, has been a long day)  
