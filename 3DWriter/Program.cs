@@ -14,6 +14,7 @@ namespace _3DWriter
         [STAThread]
         static void Main()
         {
+            Application.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new Form1());
