@@ -74,3 +74,8 @@ C:\Users\chris\documents\visual studio 2015\Projects\3DWriter\3DWriter\obj\Debug
 C:\Users\chris\documents\visual studio 2015\Projects\3DWriter\3DWriter\obj\Debug\3DWriter.pdb
 C:\Users\chris\documents\visual studio 2015\Projects\3DWriter\3DWriter\obj\Debug\3DWriter.csprojResolveAssemblyReference.cache
 C:\Users\chris\documents\visual studio 2015\Projects\3DWriter\3DWriter\obj\Debug\_3DWriter.FontEditor.resources
+C:\Users\chris\documents\visual studio 2015\Projects\3DWriter\3DWriter\bin\Debug\3DWriter.exe.manifest
+C:\Users\chris\documents\visual studio 2015\Projects\3DWriter\3DWriter\bin\Debug\3DWriter.application
+C:\Users\chris\documents\visual studio 2015\Projects\3DWriter\3DWriter\obj\Debug\3DWriter.TrustInfo.xml
+C:\Users\chris\documents\visual studio 2015\Projects\3DWriter\3DWriter\obj\Debug\3DWriter.exe.manifest
+C:\Users\chris\documents\visual studio 2015\Projects\3DWriter\3DWriter\obj\Debug\3DWriter.application
