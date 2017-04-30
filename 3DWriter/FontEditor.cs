@@ -20,8 +20,8 @@ namespace _3DWriter
         double h_char_count;                                    //font character count
         string h_font_map;                                      //font map - Character index array
         double[][] font_chars = new double[250][];              //the main font array
-        PictureBox[] segments = new PictureBox[50];
         int segs = 0;
+        int selected_seg = 0;
 
         public FontEditor()
         {
@@ -84,177 +84,30 @@ namespace _3DWriter
 
         private void lv_charmap_SelectedIndexChanged(object sender, EventArgs e)
         {
-            //attempt to generate UI objects that represent the character
-            int scale = 10;
-            Pen semiTransPen = new Pen(Color.FromArgb(25, 255, 0, 0), 2);           //create a transparent red pen for the margins (offset)
-
-            Bitmap preview;
-
+            
             lv_points.Items.Clear();
-            segments_clear();
-
-            /*for(int xx = 0; xx< panel1.Height; xx=xx+10)
-            {
-                panel1.DrawLine(semiTransPen, 0, Convert.ToSingle(xx), pb_preview.Width, Convert.ToSingle((offy * preview_mag)));  //horizontal line X
-            }*/
 
             int idx = 0;
+            segs = 0;
             if (lv_charmap.SelectedItems.Count > 0)
             {
                 idx = lv_charmap.Items.IndexOf(lv_charmap.SelectedItems[0]);
-
                 double[] thisChar = font_chars[idx];
-                for (int ptr = 0; ptr < (thisChar.Length-3) / 4; ptr++)
+
+                double char_width = thisChar[1];
+                tb_width.Text = char_width.ToString();
+                for (int ptr = 0; ptr < (thisChar.Length - 3) / 4; ptr++)
                 {
                     double x1 = thisChar[(ptr * 4) + 3];
                     double y1 = thisChar[(ptr * 4) + 4];
                     double x2 = thisChar[(ptr * 4) + 5];
                     double y2 = thisChar[(ptr * 4) + 6];
-                    lv_points.Items.Add("[" + x1 + "," + y1 + "][" + x2 + "," + y2 + "]");
-
-                    segments[segs] = new PictureBox();
-                    segments[segs].Name = "seg" + segs;
-                    
-                    double pen_x1;
-                    double pen_x2;
-                    double pen_y1;
-                    double pen_y2;
-
-                    double pb_loc_x = 0;
-                    double pb_loc_y = 0;
-                    double pb_size_x = 0;
-                    double pb_size_y = 0;
-                    /*
-                    if (x2 > x1 && y2 > y1)
-                    {   //this probably wont work out.
-                        segments[segs].Location = new Point(Convert.ToInt32(x1 * scale), Convert.ToInt32(y1 * scale));
-                        segments[segs].Size = new Size(Convert.ToInt32((x2 - x1) * scale)+1, Convert.ToInt32((y2 - y1) * scale)+1);
-                    }
-                    else
-                    {
-                        segments[segs].Location = new Point(Convert.ToInt32(x2 * scale), Convert.ToInt32(y2 * scale));
-                        //segments[segs].Size = new Size(Math.Abs(Convert.ToInt32((x1 - x2) * scale))+1, Math.Abs(Convert.ToInt32((y1 - y2) * scale))+1);
-                        segments[segs].Size = new Size(Convert.ToInt32((x1 - x2) * scale) + 1, Convert.ToInt32((y1 - y2) * scale) + 1);
-                    }*/
-
-                    if (x1 > x2)
-                    {
-                        pen_x1 = 0;
-                        pen_x2 = segments[segs].Width;
-
-                        pb_loc_x = x2;
-                        pb_size_x = x1 - x2;
-                    }
-                    else
-                    {
-                        if (x1 != x2)
-                        {
-                            pen_x1 = segments[segs].Width;
-                            pen_x2 = 0;
-
-                            pb_loc_x = x1;
-                            pb_size_x = x2 - x1;
-                        }
-                        else
-                        {
-                            pen_x1 = 0;
-                            pen_x2 = 0;
-
-                            pb_loc_x = x1;
-                            pb_size_x = 1;
-                        }
-                    }
-                    if (y1 > y2)
-                    {
-                        pen_y1 = 0;
-                        pen_y2 = segments[segs].Height;
-
-                        pb_loc_y = y2;
-                        pb_size_y = y1 - y2;
-                    }
-                    else
-                    {
-                        if (y1 != y2)
-                        {
-                            pen_y1 = segments[segs].Height;
-                            pen_y2 = 0;
-
-                            pb_loc_y = y1;
-                            pb_size_y = y2 - y1;
-                        }
-                        else
-                        {
-                            pen_y1 = 0;
-                            pen_y2 = 0;
-
-                            pb_loc_y = y1;
-                            pb_size_y = 1;
-                        }
-                    }
-
-                    segments[segs].Location = new Point(Convert.ToInt32(pb_loc_x * scale), Convert.ToInt32(pb_loc_y * scale));
-                    segments[segs].Size = new Size(Convert.ToInt32(pb_size_x * scale) + 1, Convert.ToInt32(pb_size_y * scale) + 1);
-                    preview = new Bitmap(segments[segs].Width + 1, segments[segs].Height + 1);       //init the picturebox
-                    Graphics previewGraphics = Graphics.FromImage(preview);
-                    previewGraphics.DrawLine(Pens.Blue, Convert.ToInt32(pen_x1*scale), Convert.ToInt32(pen_y1 * scale), Convert.ToInt32(pen_x2 * scale), Convert.ToInt32(pen_y2 * scale));    //draw a stroke to the picturebox
-
-
-
-                    /*
-                    if (x2 > x1 && y2 > y1) {   //this probably wont work out.
-                        segments[segs].Location = new Point(Convert.ToInt32(x1 * scale), Convert.ToInt32(y1 * scale));
-                        segments[segs].Size = new Size(Convert.ToInt32((x2 - x1) * scale), Convert.ToInt32((y2 - y1) * scale));
-
-                        preview = new Bitmap(segments[segs].Width+1, segments[segs].Height+1);       //init the picturebox
-                        Graphics previewGraphics = Graphics.FromImage(preview);
-                        previewGraphics.DrawLine(Pens.Blue, 0, 0, segments[segs].Width, segments[segs].Height);    //draw a stroke to the picturebox
-
-                    }
-                    else
-                    {
-                        segments[segs].Location = new Point(Convert.ToInt32(x2 * scale), Convert.ToInt32(y2 * scale));
-                        segments[segs].Size = new Size(Math.Abs(Convert.ToInt32((x1 - x2) * scale)), Math.Abs(Convert.ToInt32((y1 - y2) * scale)));
-
-                        preview = new Bitmap(Math.Abs(segments[segs].Width)+5, Math.Abs( segments[segs].Height)+5);       //init the picturebox
-                        Graphics previewGraphics = Graphics.FromImage(preview);
-                        previewGraphics.DrawLine(Pens.Blue,  segments[segs].Width, segments[segs].Height, 0, 0);    //draw a stroke to the picturebox
-                    }
-                    */
-
-                    segments[segs].BackColor = System.Drawing.Color.Transparent;    // .White;
-                    segments[segs].MouseClick += new MouseEventHandler(segment_Click);
-                    segments[segs].Image = preview;
-
-                    panel1.Controls.Add(segments[segs]);        //add the crude line object to the panel container
+                    lv_points.Items.Add( x1 + "," + y1 + "," + x2 + "," + y2);
                     segs++;
                 }
+                update_preview();
             }
-        }
-        void segment_Click(object sender, EventArgs e)
-        {
-            PictureBox pb = (PictureBox)sender;
-            segment_highlight(pb);
-            int idx = Convert.ToInt32((pb.Name).Replace("seg", ""));
-            lv_points.Items[idx].Selected = true;
-
-        }
-
-        void segments_clear()
-        {
-            for (int aa = 0; aa < segs; aa++)
-            {
-                panel1.Controls.Remove(segments[aa]);
-            }
-            segs = 0;
-        }
-
-        void segment_highlight(PictureBox this_pb)
-        {
-            for(int aa=0; aa< segs; aa++)
-            {
-                segments[aa].BackColor = System.Drawing.Color.Transparent;
-            }
-            this_pb.BackColor = System.Drawing.Color.Yellow;
+            MessageBox.Show(idx.ToString());
         }
 
         private void lv_points_SelectedIndexChanged(object sender, EventArgs e)
@@ -263,11 +116,140 @@ namespace _3DWriter
             if (lv_points.SelectedItems.Count > 0)
             {
                 idx = lv_points.Items.IndexOf(lv_points.SelectedItems[0]);
-                for (int aa = 0; aa < segs; aa++)
+                selected_seg = idx;
+                update_preview();
+            }
+        }
+
+        private void update_preview()
+        {
+            int scale = 10;
+            Bitmap preview = new Bitmap(pb_editor.Width, pb_editor.Height);       //init the picturebox
+            Graphics previewGraphics = Graphics.FromImage(preview);
+            Pen semiTransPen = new Pen(Color.FromArgb(25, 255, 0, 0), 2);           //create a transparent red pen for the margins (offset)
+
+
+            //height
+            previewGraphics.DrawLine(semiTransPen, 0 * scale, 0 * scale, Convert.ToSingle(tb_width.Text) * scale, 0 * scale);
+            previewGraphics.DrawLine(semiTransPen, 0 * scale, Convert.ToSingle(h_height) * scale, Convert.ToSingle(tb_width.Text) * scale, Convert.ToSingle(h_height) * scale);
+
+            //width
+            previewGraphics.DrawLine(semiTransPen, 0 * scale, 0 * scale, 0 * scale, Convert.ToSingle(h_height) * scale);
+            previewGraphics.DrawLine(semiTransPen, Convert.ToSingle(tb_width.Text) * scale, 0 * scale, Convert.ToSingle(tb_width.Text) * scale, Convert.ToSingle(h_height) * scale);
+
+
+            for (int point = 0; point < segs; point++){
+                String[] this_seg = (lv_points.Items[point].Text).Split(',');
+                previewGraphics.DrawLine( (selected_seg== point?Pens.Red:Pens.Blue), Convert.ToSingle(this_seg[0]) * scale, Convert.ToSingle(this_seg[1]) * scale, Convert.ToSingle(this_seg[2]) * scale, Convert.ToSingle(this_seg[3]) * scale);
+                if (selected_seg == point)
                 {
-                    segments[aa].BackColor = System.Drawing.Color.Transparent;
+                    tb_x1.Text = this_seg[0];
+                    tb_y1.Text = this_seg[1];
+                    tb_x2.Text = this_seg[2];
+                    tb_y2.Text = this_seg[3];
+
+                    //draw starting point
+                    previewGraphics.DrawEllipse(Pens.Red, (Convert.ToSingle(this_seg[0]) * scale)-3, (Convert.ToSingle(this_seg[1]) * scale)-3, 6, 6);
                 }
-                segments[idx].BackColor = System.Drawing.Color.Yellow;
+            }
+            
+            pb_editor.Image = preview;
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            update_preview();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            lv_points.Items[selected_seg].Text = tb_x1.Text + "," + tb_y1.Text + "," + tb_x2.Text + "," + tb_y2.Text;
+            update_preview();
+
+            //lv_points
+            double[] new_seg = new double[250];
+            new_seg[0] = Convert.ToSingle(tb_width.Text);   //width;
+            new_seg[1] = Convert.ToSingle(tb_width.Text);   //realwidth;
+            new_seg[2] = Convert.ToSingle(lv_points.Items.Count);   //size;
+
+            for(int ptr=0; ptr< lv_points.Items.Count; ptr++)
+            {
+                String[] this_seg = (lv_points.Items[selected_seg].Text).Split(',');
+                new_seg[ptr + 3] = Convert.ToSingle(this_seg[0]);
+                new_seg[ptr + 4] = Convert.ToSingle(this_seg[1]);
+                new_seg[ptr + 5] = Convert.ToSingle(this_seg[2]);
+                new_seg[ptr + 6] = Convert.ToSingle(this_seg[3]);
+            }
+            font_chars[selected_seg] = new_seg;
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            lv_points.Items.Add("0,0,0,0");
+            segs++;
+        }
+
+        private void btn_add_char_Click(object sender, EventArgs e)
+        {
+            if (tb_char_to_add.Text.Length != 1)
+            {
+                MessageBox.Show("Please enter a single character");
+            }
+            else
+            {
+                lv_charmap.Items.Add(tb_char_to_add.Text);
+                font_chars[lv_charmap.Items.Count] = new double[7];
+                font_chars[lv_charmap.Items.Count][0] = 5;
+                font_chars[lv_charmap.Items.Count][1] = 5;
+                font_chars[lv_charmap.Items.Count][2] = 4;
+                font_chars[lv_charmap.Items.Count][3] = 0;
+                font_chars[lv_charmap.Items.Count][4] = 20;
+                font_chars[lv_charmap.Items.Count][5] = 5;
+                font_chars[lv_charmap.Items.Count][6] = 20;
+
+            }
+        }
+
+        private void btn_save_as_Click(object sender, EventArgs e)
+        {
+            //btn_save_as
+            SaveFileDialog save = new SaveFileDialog();
+            save.FileName = "custom.cmf";
+            save.Filter = "cmf File | *.cmf";
+            if (save.ShowDialog() == DialogResult.OK)
+            {
+                string output = "";
+
+                /*
+                if (counter == 0) { Double.TryParse(line, out h_char_count); }          //first line: Character count
+                if (counter == 1) { Double.TryParse(line, out h_height); }              //second line: Character height
+                if (counter == 2) { h_font_map = line; }                                //third line: Character map
+                */
+
+                output += lv_charmap.Items.Count + "\n";
+                output += h_height.ToString() + "\n";
+
+                for (int ptr = 0; ptr < lv_charmap.Items.Count; ptr++)
+                {
+                    output += lv_charmap.Items[ptr].Text;
+                }
+                output += "\n";
+                
+
+                for (int ptr = 0; ptr < lv_charmap.Items.Count; ptr++)
+                {
+                    for(int aa=0; aa< font_chars[ptr].Length; aa++)
+                    {
+                        output += font_chars[ptr][aa] + ",";
+                    }
+                    output += "\n";
+                }
+
+
+                StreamWriter writer = new StreamWriter(save.OpenFile());
+                writer.WriteLine(output);
+                writer.Dispose();
+                writer.Close();
             }
         }
     }

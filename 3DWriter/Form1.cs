@@ -190,26 +190,36 @@ namespace _3DWriter
 
         void CheckVersion()
         {
-            //read the csproj file from github
-            WebClient client = new WebClient();
-            Stream stream = client.OpenRead("https://raw.githubusercontent.com/boy1dr/3DWriter/master/3DWriter/3DWriter.csproj");
-            StreamReader reader = new StreamReader(stream);
-            String content = reader.ReadToEnd();
+            try
+            {
+                //read the csproj file from github
+                WebClient client = new WebClient();
+                Stream stream = client.OpenRead("https://raw.githubusercontent.com/boy1dr/3DWriter/master/3DWriter/3DWriter.csproj");
+                StreamReader reader = new StreamReader(stream);
+                String content = reader.ReadToEnd();
 
-            if (content != "") {
-                //check version
-                int start = content.IndexOf("<ApplicationVersion>");
-                int end = content.IndexOf("</ApplicationVersion>");
-                if (end - start > 0)
+                if (content != "")
                 {
-                    String apver = content.Substring(start + 20, (end - start) - 20);
-                    string[] appfile = apver.Split('.');
-                    string[] appver = Application.ProductVersion.ToString().Split('.');
-                    if (appfile[0] == appver[0] && appfile[1] == appver[1]) { 
-                    }else {
-                        MessageBox.Show("There is a newer version available");
+                    //check version
+                    int start = content.IndexOf("<ApplicationVersion>");
+                    int end = content.IndexOf("</ApplicationVersion>");
+                    if (end - start > 0)
+                    {
+                        String apver = content.Substring(start + 20, (end - start) - 20);
+                        string[] appfile = apver.Split('.');
+                        string[] appver = Application.ProductVersion.ToString().Split('.');
+                        if (appfile[0] == appver[0] && appfile[1] == appver[1])
+                        {
+                        }
+                        else
+                        {
+                            MessageBox.Show("There is a newer version available");
+                        }
                     }
                 }
+            }catch
+            {
+
             }
         }
 
@@ -265,7 +275,13 @@ namespace _3DWriter
             if (Properties.Settings.Default.preview_multiplier == 1) { preview_mag1.Checked = true; }
             if (Properties.Settings.Default.preview_multiplier == 2) { preview_mag2.Checked = true; }
             if (Properties.Settings.Default.preview_multiplier == 4) { preview_mag4.Checked = true; }
-
+            
+            if (Properties.Settings.Default.laser) { 
+                radio_laser_mode.Checked = true;
+            }else
+            {
+                radio_draw_mode.Checked = true;
+            }
             update_bed_size();
         }
        
@@ -276,8 +292,6 @@ namespace _3DWriter
             {
                 Properties.Settings.Default.bedwidth = bedwidth.Text;
                 Properties.Settings.Default.beddepth = beddepth.Text;
-                Properties.Settings.Default.penup = penup.Text;
-                Properties.Settings.Default.pendown = pendown.Text;
                 Properties.Settings.Default.tspeed = tspeed.Text;
                 Properties.Settings.Default.dspeed = dspeed.Text;
                 Properties.Settings.Default.zspeed = zspeed.Text;
@@ -296,7 +310,18 @@ namespace _3DWriter
                 if (preview_mag1.Checked) { Properties.Settings.Default.preview_multiplier = 1; }
                 if (preview_mag2.Checked) { Properties.Settings.Default.preview_multiplier = 2; }
                 if (preview_mag4.Checked) { Properties.Settings.Default.preview_multiplier = 4; }
-                
+
+                Properties.Settings.Default.laser = radio_laser_mode.Checked;
+                if (radio_laser_mode.Checked)
+                {
+                    Properties.Settings.Default.laser_off = penup.Text;
+                    Properties.Settings.Default.laser_on = pendown.Text;
+                }
+                else
+                {
+                    Properties.Settings.Default.penup = penup.Text;
+                    Properties.Settings.Default.pendown = pendown.Text;
+                }
                 Properties.Settings.Default.Save();
             }
         }
@@ -369,6 +394,7 @@ namespace _3DWriter
             int F_draw = Convert.ToInt32(dspeed.Text) * 60;                         //get the Draw speed setting from the UI
             int F_travel = Convert.ToInt32(tspeed.Text) * 60;                       //get the Travel speed setting from the UI
             int F_zspeed = Convert.ToInt32(zspeed.Text) * 60;                       //get the Z-Axis speed setting from the UI
+            bool first_move = true;
 
             double lastx = 0;                                                       //keep track of where we were for pen up/pen down test
             double lasty = 0;
@@ -387,8 +413,19 @@ namespace _3DWriter
             if ( homex.Checked || homey.Checked || homez.Checked) { 
                     output += "G28 " + (homex.Checked?"X":"") + " " + (homey.Checked ? "Y" : "") + " " + (homez.Checked ? "Z" : "") + " F" + F_travel + "\r\n";
             }
-            output+= "G0 Z" + penup.Text + " F" + F_travel + "\r\n";                //Pen up before any moves
             
+            if (radio_laser_mode.Checked){
+                output += "M452" + "\r\n";          //select laser print mode
+                output += "M3 S255" + "\r\n";       //Spindle On, Clockwise (CNC specific)
+
+                output += "G90" + "\r\n";           // G90: Set to Absolute Positioning
+                output += "G21" + "\r\n";           // G21: Set Units to Millimeters
+                
+                output += penup.Text + "\r\n";                                      //Laser off before any moves
+            }else{
+                output += "G0 Z" + penup.Text + " F" + F_travel + "\r\n";           //Pen up before any moves
+            }
+
             string[] lines = (tb_input.Text).Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None); //split the text input up in to lines
             for (int ptr = 0; ptr < lines.Length; ptr++)                            //interate through the lines
             {
@@ -396,9 +433,12 @@ namespace _3DWriter
                 for (int a = 0; a < thisline.Length; a++)                           //interate through each character of the line
                 {
                     //init cnum - this string is a map of the font. the index of the character aligns with the font_chars array for the character data.
-                    //Language other than english won't map correctly here - perhaps this can be stored in the font files?
-                    int cnum = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~".IndexOf(thisline.Substring(a, 1));
-                    double thewidth = Convert.ToInt32(font_chars[cnum][1]);         //gets the character width
+                    //Language other than english won't map correctly here
+                    //int cnum = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~".IndexOf(thisline.Substring(a, 1)); //font map is now read from the cmf font file
+                    int cnum = h_font_map.IndexOf(thisline.Substring(a, 1));
+                    
+                    //double thewidth = Convert.ToInt32(font_chars[cnum][0]);         //gets the character width (0)
+                    double thewidth = Convert.ToInt32(font_chars[cnum][1]);         //gets the character real width (1)
                     
                     if (cnum != 0)                                                  //if the index is 0, this is a space
                     {
@@ -406,14 +446,14 @@ namespace _3DWriter
                         {
                             double x1 = Convert.ToDouble(font_chars[cnum][(b * 4) + 3] * scale);        //the +3 is because there are 3 array elements prior to x/y pair data in the array.
                             double y1 = Convert.ToDouble(font_chars[cnum][(b * 4) + 3 + 1] * scale);
-                            double x2 = Convert.ToDouble(font_chars[cnum][(b * 4) + 3 + 2] * scale);
+                            double x2 = Convert.ToDouble(font_chars[cnum][(b * 4) + 3 + 2 ] * scale);
                             double y2 = Convert.ToDouble(font_chars[cnum][(b * 4) + 3 + 3] * scale);
 
                             double draw_x1 = accum_x + x1 + offx;                   //calculate the scaled points for the picutrebox
                             double draw_y1 = (offy + accum_y) + y1;
                             double draw_x2 = accum_x + x2 + offx;
                             double draw_y2 = (offy + accum_y) + y2;
-
+                            
                             previewGraphics.DrawLine(Pens.Blue, Convert.ToInt32(draw_x1 * preview_mag), Convert.ToInt32(draw_y1 * preview_mag), Convert.ToInt32(draw_x2 * preview_mag), Convert.ToInt32(draw_y2 * preview_mag));    //draw a stroke to the picturebox
 
                             //start a pen stroke
@@ -422,13 +462,28 @@ namespace _3DWriter
 
                             if (lastx == accum_x + x1 + offx && lasty == (char_height - y1) + (max_y - offy))           //test if the pen needs to raise for a travel
                             {
-                                output += "G0 X" + GX.ToString() + " Y" + (GY).ToString() + " F" + F_draw + "\r\n";     //write the move to the output string
+                                output += "G1 X" + GX.ToString() + " Y" + (GY).ToString() + " F" + (first_move? F_travel : F_draw) + "\r\n";     //write the move to the output string
+                                first_move = false;
                             }
                             else
                             {
-                                output += "G0 Z" + penup.Text + " F" + F_zspeed + "\r\n";                               //raise the pen - Pen up
-                                output += "G0 X" + GX.ToString() + " Y" + GY.ToString() + " F" + F_draw + "\r\n";       //move the pen      
-                                output += "G0 Z" + (dryrun.Checked ? penup.Text : pendown.Text) + " F" + F_zspeed + "\r\n";     //put the pen down (unless dry run is on)
+                                if (radio_laser_mode.Checked)
+                                {
+                                    output += penup.Text + "\r\n";                               //laser poweroff - (Pen up)
+                                }
+                                else
+                                {
+                                    output += "G0 Z" + penup.Text + " F" + F_zspeed + "\r\n";                               //raise the pen - Pen up
+                                }
+                                output += "G0 X" + GX.ToString() + " Y" + GY.ToString() + " F" + F_travel + "\r\n";       //move the pen      
+                                if (radio_laser_mode.Checked)
+                                {
+                                    output += (dryrun.Checked ? penup.Text : pendown.Text) + "\r\n";     //turn laser on (unless dry run is on)
+                                }
+                                else
+                                {
+                                    output += "G0 Z" + (dryrun.Checked ? penup.Text : pendown.Text) + " F" + F_zspeed + "\r\n";     //put the pen down (unless dry run is on)
+                                }
 
                             }
                             if (Convert.ToInt32(GX) > max_x || Convert.ToInt32(GX) < 0) { out_of_bounds = true; }       //check if we went out of bounds
@@ -437,7 +492,7 @@ namespace _3DWriter
                             //end the pen stroke
                             GX = (accum_x + x2 + offx);                                                 //calculate the GCode X value
                             GY = (((char_height - y2) + (max_y - offy)) - accum_y) - font_offset_y;     //calculate the GCode Y value
-                            output += "G0 X" + GX.ToString() + " Y" + GY.ToString() + " F" + F_draw + "\r\n";       //write the move to the output string
+                            output += "G1 X" + GX.ToString() + " Y" + GY.ToString() + " F" + F_draw + "\r\n";       //write the move to the output string
 
                             lastx = accum_x + x2 + offx;                            //keep the last x/y so we can test it for pen up on next loop
                             lasty = (char_height - y2) + (max_y - offy);
@@ -454,13 +509,30 @@ namespace _3DWriter
                 //end lines loop
             }
             //end of ploting moves
-            output += "G0 Z" + penup.Text + " F" + F_zspeed + "\r\n";                   //Raise the pen
+            if (radio_laser_mode.Checked)
+            {
+                output += "G0 F3000" + "\r\n";
+                output += penup.Text + "\r\n";                                          //poweroff the laser
+
+                output += "G91" + "\r\n";
+                output += "G90" + "\r\n";
+                output += "M3 S0" + "\r\n";                                             //speed zero
+                output += "M5 S0" + "\r\n";                                             //spindle off
+                
+                output += "M18" + "\r\n";                                               //Disable steppers
+            }
+            else
+            {
+                output += "G0 Z" + penup.Text + " F" + F_zspeed + "\r\n";               //Raise the pen
+            }
 
             //if (!(!homex.Checked && !homey.Checked))                                    //Home the pen (if enabled in UI)
             if ( homex.Checked || homey.Checked )
             {
                 output += "G0 " + (homex.Checked ? "X0" : "") + " " + (homey.Checked ? "Y0" : "") + " F" + F_travel + "\r\n";
             }
+
+            output += "" + "\r\n";                                                      //end space
 
             pb_preview.Image = preview;                                                 //write the preview image to the picturebox
             if (saving)                                                                 //if "Render GCode" was clicked, offer to save the GCode file
@@ -480,7 +552,7 @@ namespace _3DWriter
             toolStripStatusLabel3.Text = "";
 
             if (out_of_bounds) {                                                        //Complain about life
-                MessageBox.Show("Warning: Pen went out of bounds !");
+                MessageBox.Show("Warning: " + (radio_laser_mode.Checked?"Laser":"Pen") + " went out of bounds !");
             }
             button1.Enabled = true;                                                     //re-enable the buttons
             button2.Enabled = true;
@@ -639,7 +711,46 @@ namespace _3DWriter
             editorbox.Show();
         }
 
+        private void radio_draw_mode_CheckedChanged(object sender, EventArgs e)
+        {
+            //save current values
+            //Properties.Settings.Default.penup = penup.Text;
+            //Properties.Settings.Default.pendown = pendown.Text;
+            set_pen_mode();
+        }
 
+        private void radio_laser_mode_CheckedChanged(object sender, EventArgs e)
+        {
+            //save current values
+            //Properties.Settings.Default.penup = penup.Text;
+            //Properties.Settings.Default.pendown = pendown.Text;
+            set_laser_mode();
+        }
+
+        private void set_laser_mode()
+        {
+            label_mode_down.Text = "Laser ON";
+            label_mode_up.Text = "Laser OFF";
+            label_mode_down_text.Text = "GCode";
+            label_mode_up_text.Text = "GCode";
+
+            pendown.Text = Properties.Settings.Default.laser_on;
+            penup.Text = Properties.Settings.Default.laser_off;
+
+            dryrun.Text = "(laser is always off)";
+        }
+        private void set_pen_mode()
+        {
+            label_mode_down.Text = "Pen down";
+            label_mode_up.Text = "Pen up";
+            label_mode_down_text.Text = "mm";
+            label_mode_up_text.Text = "mm";
+
+            pendown.Text = Properties.Settings.Default.pendown;
+            penup.Text = Properties.Settings.Default.penup;
+
+            dryrun.Text = "(pen is always up)";
+        }
 
         //Wow you made it, take a break :P
     }

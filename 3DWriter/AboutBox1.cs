@@ -17,9 +17,9 @@ namespace _3DWriter
             this.Text = String.Format("About {0}", AssemblyTitle);
             this.labelProductName.Text = AssemblyProduct;
             this.labelVersion.Text = String.Format("Version {0}", AssemblyVersion);
-            this.labelCopyright.Text = "Copyright: None";  
-            this.labelCompanyName.Text = AssemblyCompany;
-            this.textBoxDescription.Text = "Absolutely no warranty.\r\nUse at your own risk.\r\n\r\nTested on a Prusa i3 clone.\r\n\r\nI urge you to preview the GCode files in a simulator like pronterface before printing.";
+            this.labelCopyright.Text = "Copyright: Apache License 2.0";  
+            //this.labelCompanyName.Text = AssemblyCompany;
+            this.textBoxDescription.Text = "Absolutely no warranty.\r\nUse at your own risk.\r\n\r\nTested on a Prusa i3 clone.\r\n\r\nI urge you to preview the GCode files in a simulator like pronterface before printing.\r\n\r\nLasers are dangerous, use eye protection and common sense.";
         }
 
         #region Assembly Attribute Accessors

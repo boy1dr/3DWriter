@@ -250,5 +250,41 @@ namespace _3DWriter.Properties {
                 this["zspeed"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool laser {
+            get {
+                return ((bool)(this["laser"]));
+            }
+            set {
+                this["laser"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("M4")]
+        public string laser_on {
+            get {
+                return ((string)(this["laser_on"]));
+            }
+            set {
+                this["laser_on"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("M5")]
+        public string laser_off {
+            get {
+                return ((string)(this["laser_off"]));
+            }
+            set {
+                this["laser_off"] = value;
+            }
+        }
     }
 }

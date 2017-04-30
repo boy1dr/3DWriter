@@ -59,5 +59,14 @@
     <Setting Name="zspeed" Type="System.String" Scope="User">
       <Value Profile="(Default)">120</Value>
     </Setting>
+    <Setting Name="laser" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="laser_on" Type="System.String" Scope="User">
+      <Value Profile="(Default)">M4</Value>
+    </Setting>
+    <Setting Name="laser_off" Type="System.String" Scope="User">
+      <Value Profile="(Default)">M5</Value>
+    </Setting>
   </Settings>
 </SettingsFile>
