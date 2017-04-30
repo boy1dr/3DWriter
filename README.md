@@ -49,6 +49,38 @@ At first i just used a rubber band to hold the pen on but it wiggled around too 
 I made it so when the pen tip is retracted it is higher than my nozzle so i can keep the pen there all the time.  
 Using a program like Pronterface you can manually move your extruder around to find the correct height for pen up & down, also the X and Y offset so you don't write off the edge of the page.
 
+# Laser
+I equipped my 3D Printer with a cheap 1W UV laser from ebay which work quite well on a variety of materials.
+I was using Marlin firmware but found there is no support for controlling a laser other than to connect the laser to the cooling fan and use M106/M107 to turn the laser on and off.
+
+Repetier firmware has full laser support so after a bit of mucking about i managed to get it loaded on my GT2560 controller.
+
+Since my printer has only 1 extruder, i decided to use the mosfet output normally used for a second extruder as a 12v power source for my laser.
+Repetier has a great online configuration tool for setting things like which output to use for laser control.It made this process quite simple.
+
+I used a LM7805 to regulate the 12v supply to 5v that the laser uses. 
+I also connected a simple switch on the laser so i can be sure it's only going to work when i want it too :)
+
+
+REPETIER USERS...
+Please remove the laser on/off commands in 3DWriter. The commands required to activate the laser are put in to the GCode file automatically.
+
+MARLIN USERS...
+You don't have support for the laser GCode's so you need to specify your commands for laser ON and OFF in the program.
+If you haven't already connected a laser, you can add a switch to the wires going to your part cooling fan so you can switch between cooling or laser.
+If you do this, your commands will be...
+Laser ON: M106
+Laser Off: M107
+
+ALL USERS...
+Your cheap sub $25 1W laser from ebay will likely require 5v. Use an appropriate power supply for it, such as an LM7805 which are cheap and very very simple to wire in.
+
+FOCUS...
+All lasers need to be focused, i found that mine is 68mm from the build plate but that's because of where i mounted my laser. This will be different for ALL users.
+I suggest using thick cardboard on your buildplate so you don't damage it. Make some simple/quick text, load it up in repetier host or pronterface etc, print it, raise your z-height, repeat until you get good results.
+
+
+
 
 # USE AT YOUR OWN RISK
 The only 3D Printer i own is a RepRap i3 clone and i can confirm it has been tested and works well on that style of printer.
