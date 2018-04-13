@@ -94,6 +94,8 @@ I have included the C# 2015 project that you can compile yourself along with a b
 
 I would love to hear your feedback :)
 
+### 13/04/2018 - (See bad_writing.png) Some users have described a blocky / 8-bit look on some printers, if this happens to you please raise an issue for it and let me know what your printer is so i can work on a fix.
+
 ### 12/01/2017 v1.1 released
 Added real line height to status bar.
 
