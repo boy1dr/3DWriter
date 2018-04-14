@@ -7,7 +7,7 @@ After mucking about with different fonts i found a fontset called the Hershey fo
 Video demo over on youtube [https://youtu.be/yK_YGwMRR40](https://youtu.be/yK_YGwMRR40)
 
 Windows executable is in 3DWriter/bin/Release/3DWriter.exe  
-Note: Windows10 users may get a security warning, this is normal because i do not sign my applications, just allow it.  
+Note: Windows10 users may get a security warning, this is normal because i do not sign my applications, click "more info" then "run anyay".  
 Feel free to check and compile your own :)
 
 ## How to use it
