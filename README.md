@@ -94,7 +94,8 @@ I have included the C# 2015 project that you can compile yourself along with a b
 
 I would love to hear your feedback :)
 
-### 13/04/2018 - Some users have described a blocky / 8-bit look on some printers, comma's found in gcode file instead of periods (for decimal numbers). language localization issue, fixed.
+### 13/04/2018 - Blocky text
+Some users have described a blocky / 8-bit look on some printers, comma's found in gcode file instead of periods (for decimal numbers). language localization issue, fixed.
 
 ### 12/01/2017 v1.1 released
 Added real line height to status bar.
