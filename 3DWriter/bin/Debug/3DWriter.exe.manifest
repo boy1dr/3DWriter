@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="3DWriter.exe" version="1.4.0.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="3DWriter.exe" version="1.6.0.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="3DWriter" version="1.4.0.0" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="3DWriter" version="1.6.0.0" language="neutral" processorArchitecture="msil" />
     <commandLine file="3DWriter.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -42,14 +42,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="3DWriter.exe" size="235488">
-      <assemblyIdentity name="3DWriter" version="1.4.0.0" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="3DWriter.exe" size="236000">
+      <assemblyIdentity name="3DWriter" version="1.6.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>9wyNCNeyAmImNIDB6g8cfkVII6NpikTBwqBGQTwpfzg=</dsig:DigestValue>
+        <dsig:DigestValue>PVYu9izvLpXLJSNdxXVe7qAEyKJW6y/ccfbt5muZMks=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -197,13 +197,13 @@
       <dsig:DigestValue>5ZF+uHFIs8l+Arop3NHwbPWdrR5lew6NHLI4yrB4+lA=</dsig:DigestValue>
     </hash>
   </file>
-  <file name="fonts\hershey.txt" size="5606">
+  <file name="fonts\hershey.txt" size="5723">
     <hash>
       <dsig:Transforms>
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>b/tjni0nmemHzsT5E0c9QRnkJwtlwTzq/hzVAvkE2FU=</dsig:DigestValue>
+      <dsig:DigestValue>KHS6VWuZROSFeC61LGlfsJjN43Xm4iLyN7tzZ6kDxLQ=</dsig:DigestValue>
     </hash>
   </file>
   <file name="fonts\japanese.png" size="18474">

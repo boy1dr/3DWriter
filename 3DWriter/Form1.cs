@@ -197,7 +197,7 @@ namespace _3DWriter
                 Stream stream = client.OpenRead("https://raw.githubusercontent.com/boy1dr/3DWriter/master/3DWriter/3DWriter.csproj");
                 StreamReader reader = new StreamReader(stream);
                 String content = reader.ReadToEnd();
-
+                
                 if (content != "")
                 {
                     //check version
@@ -413,7 +413,7 @@ namespace _3DWriter
             if ( homex.Checked || homey.Checked || homez.Checked) { 
                     output += "G28 " + (homex.Checked?"X":"") + " " + (homey.Checked ? "Y" : "") + " " + (homez.Checked ? "Z" : "") + " F" + F_travel + "\r\n";
             }
-            
+            output += "G21" + "\r\n";               //set units to millimeters
             if (radio_laser_mode.Checked){
                 output += "M452" + "\r\n";          //select laser print mode
                 output += "M3 S255" + "\r\n";       //Spindle On, Clockwise (CNC specific)
@@ -534,6 +534,27 @@ namespace _3DWriter
 
             output += "" + "\r\n";                                                      //end space
 
+            //FIXES: 14/04/2018 : remove line duplicates, enforce periods instead of comma's in decimal numbers caused by language preferences
+            //it's a bit of a hack but whatever works
+            string output_filtered = "";
+            string lastline="";
+            using (StringReader reader = new StringReader(output))
+            {
+                string line = string.Empty;
+                do
+                {
+                    line = reader.ReadLine();
+                    if (line != null && lastline != line)
+                    {
+                        output_filtered += line.Replace(",",".") + "\r\n";
+                        lastline = line;
+                    }
+
+                } while (line != null);
+            }
+
+
+
             pb_preview.Image = preview;                                                 //write the preview image to the picturebox
             if (saving)                                                                 //if "Render GCode" was clicked, offer to save the GCode file
             {
@@ -544,7 +565,7 @@ namespace _3DWriter
                 {
                     last_filename = save.FileName;
                     StreamWriter writer = new StreamWriter(save.OpenFile());
-                    writer.WriteLine(output);
+                    writer.WriteLine(output_filtered);
                     writer.Dispose();
                     writer.Close();
                 }
