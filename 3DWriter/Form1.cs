@@ -194,27 +194,19 @@ namespace _3DWriter
             {
                 //read the csproj file from github
                 WebClient client = new WebClient();
-                Stream stream = client.OpenRead("https://raw.githubusercontent.com/boy1dr/3DWriter/master/3DWriter/3DWriter.csproj");
+                Stream stream = client.OpenRead("https://raw.githubusercontent.com/boy1dr/3DWriter/master/3DWriter/version.txt");
                 StreamReader reader = new StreamReader(stream);
                 String content = reader.ReadToEnd();
-                
-                if (content != "")
+                if(content!="" && Application.ProductVersion.ToString() != content)
                 {
-                    //check version
-                    int start = content.IndexOf("<ApplicationVersion>");
-                    int end = content.IndexOf("</ApplicationVersion>");
-                    if (end - start > 0)
+                    DialogResult dialogResult = MessageBox.Show("Open github page?", "Update available", MessageBoxButtons.YesNo);
+                    if (dialogResult == DialogResult.Yes)
                     {
-                        String apver = content.Substring(start + 20, (end - start) - 20);
-                        string[] appfile = apver.Split('.');
-                        string[] appver = Application.ProductVersion.ToString().Split('.');
-                        if (appfile[0] == appver[0] && appfile[1] == appver[1])
-                        {
-                        }
-                        else
-                        {
-                            MessageBox.Show("There is a newer version available");
-                        }
+                        Process.Start("https://github.com/boy1dr/3DWriter");
+                    }
+                    else if (dialogResult == DialogResult.No)
+                    {
+                        //do nothing
                     }
                 }
             }catch
@@ -771,6 +763,11 @@ namespace _3DWriter
             penup.Text = Properties.Settings.Default.penup;
 
             dryrun.Text = "(pen is always up)";
+        }
+
+        private void checkForUpdateToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CheckVersion();
         }
 
         //Wow you made it, take a break :P
