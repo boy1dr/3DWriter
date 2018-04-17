@@ -185,10 +185,10 @@ namespace _3DWriter
                 LoadFonts(toolStripButton2.Checked);    //fills in the font selection combobox
                 load_font(Properties.Settings.Default.default_font);    //reads the selected font file in to memory
             }
-            CheckVersion();
+            CheckVersion(0);
         }
 
-        void CheckVersion()
+        void CheckVersion(int notify)
         {
             try
             {
@@ -207,6 +207,13 @@ namespace _3DWriter
                     else if (dialogResult == DialogResult.No)
                     {
                         //do nothing
+                    }
+                }
+                else
+                {
+                    if (notify==1 && Application.ProductVersion.ToString() == content)
+                    {
+                        MessageBox.Show("You are running the current version\n" + Application.ProductVersion.ToString());
                     }
                 }
             }catch
@@ -427,12 +434,22 @@ namespace _3DWriter
                     //init cnum - this string is a map of the font. the index of the character aligns with the font_chars array for the character data.
                     //Language other than english won't map correctly here
                     //int cnum = " !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~".IndexOf(thisline.Substring(a, 1)); //font map is now read from the cmf font file
-                    int cnum = h_font_map.IndexOf(thisline.Substring(a, 1));
+                    int cnum = 0;
+                    bool valid = true;
+                    double thewidth = 0;
+                    try
+                    {
+                        //check to see if we have that character
+                        cnum = h_font_map.IndexOf(thisline.Substring(a, 1));
+                        //double thewidth = Convert.ToInt32(font_chars[cnum][0]);         //gets the character width (0)
+                        thewidth = Convert.ToInt32(font_chars[cnum][1]);         //gets the character real width (1)
+                    }
+                    catch
+                    {
+                        valid = false;
+                    }
                     
-                    //double thewidth = Convert.ToInt32(font_chars[cnum][0]);         //gets the character width (0)
-                    double thewidth = Convert.ToInt32(font_chars[cnum][1]);         //gets the character real width (1)
-                    
-                    if (cnum != 0)                                                  //if the index is 0, this is a space
+                    if (valid && cnum != 0)                                                  //if the index is 0, this is a space
                     {
                         for (int b = 0; b < font_chars[cnum].Length / 4; b++)       //loop through the stroke x/y pairs
                         {
@@ -570,9 +587,7 @@ namespace _3DWriter
             button1.Enabled = true;                                                     //re-enable the buttons
             button2.Enabled = true;
         }
-
-      
-
+        
         private void update_bed_size()
         {
             //update the preview picturebox and form size based on bed x/y settings
@@ -767,7 +782,7 @@ namespace _3DWriter
 
         private void checkForUpdateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CheckVersion();
+            CheckVersion(1);
         }
 
         //Wow you made it, take a break :P
