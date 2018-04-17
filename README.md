@@ -6,6 +6,10 @@ After mucking about with different fonts i found a fontset called the Hershey fo
 
 Video demo over on youtube [https://youtu.be/yK_YGwMRR40](https://youtu.be/yK_YGwMRR40)
 
+Windows executable is in 3DWriter/bin/Release/3DWriter.exe  
+Note: Windows10 users may get a security warning, this is normal because i do not sign my applications, click "more info" then "run anyay".  
+Feel free to check and compile your own :)
+
 ## How to use it
 There are 3 main columns. 
 - Text entry
@@ -96,6 +100,9 @@ I would love to hear your feedback :)
 
 ### 13/04/2018 - Blocky text
 Some users have described a blocky / 8-bit look on some printers, comma's found in gcode file instead of periods (for decimal numbers). language localization issue, fixed.
+
+### 13/04/2018 - Update checking
+Added a more reliable method of update checking.
 
 ### 12/01/2017 v1.1 released
 Added real line height to status bar.
