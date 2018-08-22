@@ -69,6 +69,9 @@
   <PropertyGroup>
     <SignManifests>true</SignManifests>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>3dwriter_logo_icon_square_logo_GD4_icon.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -240,6 +243,8 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="3dwriter_logo_icon_icon_xIo_icon.ico" />
+    <Content Include="3dwriter_logo_icon_square_logo_GD4_icon.ico" />
     <Content Include="fonts\astrology.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
