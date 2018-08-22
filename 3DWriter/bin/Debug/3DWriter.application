@@ -7,14 +7,14 @@
     <framework targetVersion="4.5.2" profile="Full" supportedRuntime="4.0.30319" />
   </compatibleFrameworks>
   <dependency>
-    <dependentAssembly dependencyType="install" codebase="3DWriter.exe.manifest" size="18027">
+    <dependentAssembly dependencyType="install" codebase="3DWriter.exe.manifest" size="19443">
       <assemblyIdentity name="3DWriter.exe" version="1.6.2.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>WLVqBZ8xOyjvDmqgpZIrNzm4i8dJBEgTTAjrIjrelmI=</dsig:DigestValue>
+        <dsig:DigestValue>pBi/ahdy1fnisaCMbctpacDYMfy0+16ASEcVjg87i8c=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
