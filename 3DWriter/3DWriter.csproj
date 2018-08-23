@@ -52,10 +52,10 @@
     <StartupObject>_3DWriter.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>2934F5658C8517B0EF6B22F4BFCC010892115AD2</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>BC1F0CF45700416C7FFF2EB2E4251122D6AEDAE0</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>3DWriter_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>3DWriter_1_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -68,6 +68,9 @@
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>true</SignManifests>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>3dwriter_logo_transparent_background_square_logo_Qh2_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -128,6 +131,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="3DWriter_1_TemporaryKey.pfx" />
     <None Include="3DWriter_TemporaryKey.pfx" />
     <None Include="fonts\astrology.h">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -240,6 +244,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="3dwriter_logo_icon_icon_xIo_icon.ico" />
+    <Content Include="3dwriter_logo_icon_square_logo_GD4_icon.ico" />
+    <Content Include="3dwriter_logo_transparent_background_square_logo_Qh2_icon.ico" />
     <Content Include="fonts\astrology.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
