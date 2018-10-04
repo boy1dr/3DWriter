@@ -195,9 +195,10 @@ namespace _3DWriter
         {
             try
             {
-                //read the csproj file from github
+                //read the version file from github
+                Random random = new Random();
                 WebClient client = new WebClient();
-                Stream stream = client.OpenRead("https://raw.githubusercontent.com/boy1dr/3DWriter/master/3DWriter/version.txt");
+                Stream stream = client.OpenRead("https://raw.githubusercontent.com/boy1dr/3DWriter/master/3DWriter/version.txt?random=" + random.Next().ToString());
                 StreamReader reader = new StreamReader(stream);
                 String content = reader.ReadToEnd();
                 if(content!="" && Application.ProductVersion.ToString() != content)

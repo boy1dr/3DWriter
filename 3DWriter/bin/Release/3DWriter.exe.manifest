@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="3DWriter.exe" size="338944">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="3DWriter.exe" size="339456">
       <assemblyIdentity name="3DWriter" version="1.6.3.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>EXVs0IFRqCm+XczSdkheztBGFv9LjYIyllx0KQDhFy8=</dsig:DigestValue>
+        <dsig:DigestValue>uJOXqxNXJUalUqRTZBt7fIGyzoW2BMhiM9sA8m5L1vs=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
