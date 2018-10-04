@@ -11,11 +11,13 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using System.Globalization;
 using System.Collections;
 using System.Diagnostics;
 using System.Net;
 using System.Xml.Linq;
 using System.Xml;
+using System.Threading;
 
 namespace _3DWriter
 {
@@ -24,6 +26,7 @@ namespace _3DWriter
         double h_height;                                        //font character height
         double h_char_count;                                    //font character count
         string h_font_map;                                      //font map - Character index array
+        int rendercount = 0;                                    //count the renders
 
         double[][] font_chars = new double[250][];              //the main font array
         string last_filename = "";
@@ -370,6 +373,7 @@ namespace _3DWriter
             button2.Enabled = false;
             toolStripStatusLabel3.Text = "Rendering...Please wait";
             Application.DoEvents();                                                 //take a breath
+            rendercount++;
 
             double GX = 0;
             double GY = 0;
@@ -407,6 +411,25 @@ namespace _3DWriter
             previewGraphics.DrawLine(semiTransPen, Convert.ToSingle(offx * preview_mag), 0, Convert.ToSingle(offx * preview_mag), pb_preview.Height);   //vertical line Y
             
             string output = "";                                                     //init the GCode output string
+
+            //write current settings to file for debug and consistency
+            output += "; Generated with 3DWriter " + Application.ProductVersion.ToString() + "\r\n; \r\n";
+            output += "; Font: " + FontComboBox.Text + "\r\n";
+            output += "; Bed: " + bedwidth.Text + " x " + beddepth.Text + "\r\n";
+            output += "; Offset: " + offsetx.Text + " x " + offsety.Text + "\r\n";
+            output += "; Draw mode: " + (radio_laser_mode.Checked ? "Laser" : "Pen") + "\r\n";
+            output += "; Pen Up: " + penup.Text + "\r\n";
+            output += "; Pen Down: " + pendown.Text + "\r\n";
+            output += "; Travel speed: " + tspeed.Text + "\r\n";
+            output += "; Draw speed: " + dspeed.Text + "\r\n";
+            output += "; Z speed: " + zspeed.Text + "\r\n";
+            output += "; Line Spacing: " + lspacing.Text + "\r\n";
+            output += "; Letter spacing: " + letspacing.Text + "\r\n";
+            output += "; Home: " + (homex.Checked?"X":"") + (homey.Checked ? "Y" : "") + (homez.Checked ? "Z" : "") + "\r\n";
+            output += "; Dry run: " + (dryrun.Checked ? "ON" : "OFF") + "\r\n";
+            output += "; Render count: " + rendercount + "\r\n";
+            output += "; Decimal: " + Thread.CurrentThread.CurrentCulture.NumberFormat.NumberDecimalSeparator + "\r\n";
+            output += "; Text input...\r\n; ----\r\n;\t" + (tb_input.Text.Replace("\r\n", "\r\n;\t")) + "\r\n; ---- \r\n";
 
             //if ( !(!homex.Checked && !homey.Checked && !homez.Checked) ) {          //Do we need to home the printer?
             if ( homex.Checked || homey.Checked || homez.Checked) { 
@@ -547,6 +570,7 @@ namespace _3DWriter
             //it's a bit of a hack but whatever works
             string output_filtered = "";
             string lastline="";
+            int lines_omitted = 0;
             using (StringReader reader = new StringReader(output))
             {
                 string line = string.Empty;
@@ -558,10 +582,14 @@ namespace _3DWriter
                         output_filtered += line.Replace(",",".") + "\r\n";
                         lastline = line;
                     }
+                    else
+                    {
+                        lines_omitted++;
+                    }
 
                 } while (line != null);
             }
-
+            output_filtered += "; lines omitted: " + lines_omitted + "\r\n";            //keep an eye on the duplicate lines for further refinement later
 
 
             pb_preview.Image = preview;                                                 //write the preview image to the picturebox

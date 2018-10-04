@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
-  <asmv1:assemblyIdentity name="3DWriter.exe" version="1.6.2.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
+  <asmv1:assemblyIdentity name="3DWriter.exe" version="1.6.3.0" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
   <description asmv2:iconFile="3dwriter_logo_transparent_background_square_logo_Qh2_icon.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
-    <assemblyIdentity name="3DWriter" version="1.6.2.0" language="neutral" processorArchitecture="msil" />
+    <assemblyIdentity name="3DWriter" version="1.6.3.0" language="neutral" processorArchitecture="msil" />
     <commandLine file="3DWriter.exe" parameters="" />
   </entryPoint>
   <trustInfo>
@@ -43,14 +43,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="3DWriter.exe" size="341456">
-      <assemblyIdentity name="3DWriter" version="1.6.2.0" language="neutral" processorArchitecture="msil" />
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="3DWriter.exe" size="342016">
+      <assemblyIdentity name="3DWriter" version="1.6.3.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>AottVdB8OqM2eIArMoOK70emRQxVg0sa4dZ+XKzbXe4=</dsig:DigestValue>
+        <dsig:DigestValue>JSXMfl38TqXv4y8wM8BxXgjcIwM2SM4iKqimIdk02r4=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
