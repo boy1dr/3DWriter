@@ -416,6 +416,7 @@ namespace _3DWriter
             //write current settings to file for debug and consistency
             output += "; Generated with 3DWriter " + Application.ProductVersion.ToString() + "\r\n; \r\n";
             output += "; Font: " + FontComboBox.Text + "\r\n";
+            output += "; FontScale: " + lbl_font_height.Text + "mm (" + scale + ")\r\n";
             output += "; Bed: " + bedwidth.Text + " x " + beddepth.Text + "\r\n";
             output += "; Offset: " + offsetx.Text + " x " + offsety.Text + "\r\n";
             output += "; Draw mode: " + (radio_laser_mode.Checked ? "Laser" : "Pen") + "\r\n";
@@ -585,6 +586,10 @@ namespace _3DWriter
                     }
                     else
                     {
+                        if (line != null)
+                        {
+                            output_filtered += line.Replace(",", ".") + "\r\n"; //DELETE ME - here for testing purposes only
+                        }
                         lines_omitted++;
                     }
 
