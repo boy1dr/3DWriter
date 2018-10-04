@@ -393,7 +393,7 @@
         <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>/LtWlqtwvvrjKcY/+sTltGw1X9BH7cVX0QuYeYH0Ma0=</dsig:DigestValue>
+      <dsig:DigestValue>7r9xBGFu85CMyazYMwUEcNruVHQH9BDTfNsT5ed0Gn4=</dsig:DigestValue>
     </hash>
   </file>
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
