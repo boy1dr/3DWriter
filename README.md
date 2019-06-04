@@ -1,6 +1,8 @@
 # 3DWriter
 Use your 3D Printer with a pen to write letters, birthday cards etc  
 
+Try the new (still free) version https://3dwriter.io
+
 I couldn't find any small programs that i could use to write letters using my 3D Printer as a plotter so i wrote one.
 After mucking about with different fonts i found a fontset called the Hershey fonts. These are the only fonts used in this application since they are primarily stroke based fonts rather than outline fonts that every other program i tried had.
 
